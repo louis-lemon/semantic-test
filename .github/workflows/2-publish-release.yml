@@ -1,0 +1,121 @@
+name: Release
+on:
+    push:
+        branches:
+            - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions: {}
+
+jobs:
+    build:
+        name: test
+        runs-on: macos-latest
+        timeout-minutes: 10
+        permissions:
+            contents: write
+
+        steps:
+            - name: Check out a copy of the repo
+              uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+
+#            - name: Get Yarn cache path
+#              id: yarn-cache-dir-path
+#              run: echo "::set-output name=dir::$(yarn cache dir)"
+#
+#            - name: Cache Yarn cache and node_modules
+#              id: cache-dependencies
+#              uses: actions/cache@v2
+#              with:
+#                  path: |
+#                      ${{ steps.yarn-cache-dir-path.outputs.dir }}
+#                      node_modules
+#                      projects/web/node_modules
+#                  key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+#                  restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
+#
+#            - name: Install dependencies
+#              run: |
+#                  yarn install --frozen-lockfile
+#              if: steps.cache-dependencies.outputs.cache-hit != 'true'
+
+#            - name: Semantic Release
+#              env:
+#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#              run: npx semantic-release -e ./release.config.cjs
+
+#            - name: Get version from ref
+#              id: get-version
+#              run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+#
+#            - name: Publish release on GitHub
+#              uses: test-room-7/action-publish-release-drafts@v0
+#              with:
+#                  github-token: ${{ secrets.GITHUB_TOKEN }}
+#                  tag-name: ${{ steps.get-version.outputs.VERSION }}
+
+            - name: Get Version
+              id: get-version
+              run: |
+                  VERSION=$(node -p "require('./package.json').version")
+                  echo $VERSION
+                  echo "::set-output name=version::$VERSION"
+
+            - name: release
+              id: release-drafted
+              uses: release-drafter/release-drafter@v5
+              with:
+                  publish: true
+                  version: ${{ steps.get-version.outputs.version }}
+                  tag: ${{ steps.get-version.outputs.version }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Slack Alarm
+              id: slack-alarm
+              run: |
+                  echo "The id is ${{ steps.release-drafted.outputs.id }}"
+                  echo "The name is ${{ steps.release-drafted.outputs.name }}"
+                  echo "The tag_name is ${{ steps.release-drafted.outputs.tag_name }}"
+                  echo "The body is ${{ steps.release-drafted.outputs.body }}"
+                  echo "The html_url is ${{ steps.release-drafted.outputs.html_url }}"
+                  echo "The upload_url is ${{ steps.release-drafted.outputs.upload_url }}"
+
+            - name: Post to a Slack channel
+              id: slack
+              uses: slackapi/slack-github-action@v1.25.0
+              with:
+                  # Slack channel id, channel name, or user id to post message.
+                  # See also: https://api.slack.com/methods/chat.postMessage#channels
+                  channel-id: ${{ secrets.TEST_CHANNEL_ID }}
+                  # For posting a rich message using Block Kit
+                  payload: |
+                      {
+                          "text": "릴리즈봇 테스트",
+                          "blocks": [
+                              {
+                                  "type": "section",
+                                  "text": {
+                                      "type": "mrkdwn",
+                                      "text": ${{ toJSON(steps.release-drafted.outputs.body) }}
+                                  }
+                              }
+                          ]
+                      }
+              env:
+                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+#              run: |
+#                  echo "The id is ${{ steps.release-drafted.outputs.id }}"
+#                  echo "The name is ${{ steps.release-drafted.outputs.name }}"
+#                  echo "The tag_name is ${{ steps.release-drafted.outputs.tag_name }}"
+#                  echo "The body is ${{ steps.release-drafted.outputs.body }}"
+#                  echo "The html_url is ${{ steps.release-drafted.outputs.html_url }}"
+#                  echo "The upload_url is ${{ steps.release-drafted.outputs.upload_url }}"
+

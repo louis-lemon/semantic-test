@@ -1,0 +1,78 @@
+name: Release Drafter
+
+on:
+    push:
+        branches:
+            - develop
+    pull_request:
+        branches: [develop]
+        types: [opened, reopened, synchronize]
+
+permissions:
+    contents: read
+
+jobs:
+    update_release_draft:
+        permissions:
+            contents: write
+            pull-requests: write
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out a copy of the repo
+              uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version-file: '.nvmrc'
+
+            - name: Get Version
+              id: get-version
+              run: |
+                  VERSION=$(node -p "require('./package.json').version")
+                  echo $VERSION
+                  echo "::set-output name=version::$VERSION"
+
+            - uses: release-drafter/release-drafter@v5
+              id: draft
+              with:
+                  publish: false
+                  version: ${{ steps.get-version.outputs.version }}
+                  tag: ${{ steps.get-version.outputs.version }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Slack Alarm
+              id: slack-alarm
+              run: |
+                  echo "The id is ${{ steps.draft.outputs.id }}"
+                  echo "The name is ${{ steps.draft.outputs.name }}"
+                  echo "The tag_name is ${{ steps.draft.outputs.tag_name }}"
+                  echo "The body is ${{ steps.draft.outputs.body }}"
+                  echo "The html_url is ${{ steps.draft.outputs.html_url }}"
+                  echo "The upload_url is ${{ steps.draft.outputs.upload_url }}"
+
+            - name: Post to a Slack channel2
+              id: slack
+              uses: slackapi/slack-github-action@v1.25.0
+              with:
+                  # Slack channel id, channel name, or user id to post message.
+                  # See also: https://api.slack.com/methods/chat.postMessage#channels
+                  channel-id: ${{ secrets.TEST_CHANNEL_ID }}
+                  # For posting a rich message using Block Kit
+                  payload: |
+                      {
+                          "text": "릴리즈봇 테스트",
+                          "blocks": [
+                              {
+                                  "type": "section",
+                                  "text": {
+                                      "type": "mrkdwn",
+                                      "text": ${{ toJSON(steps.draft.outputs.body) }}
+                                  }
+                              }
+                          ]
+                      }
+              env:
+                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

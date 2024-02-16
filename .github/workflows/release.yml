@@ -1,0 +1,56 @@
+#name: Release
+#on:
+#    push:
+#        branches:
+#            - main
+#
+#concurrency: ${{ github.workflow }}-${{ github.ref }}
+#
+#permissions: {}
+#
+#jobs:
+#    build:
+#        name: test
+#        runs-on: macos-latest
+#        timeout-minutes: 10
+#        permissions:
+#            contents: write
+#
+#        steps:
+#            - name: Check out a copy of the repo
+#              uses: actions/checkout@v3
+#
+#            - name: Setup Node.js
+#              uses: actions/setup-node@v3
+#              with:
+#                  node-version-file: '.nvmrc'
+#
+#            - name: Get Yarn cache path
+#              id: yarn-cache-dir-path
+#              run: echo "::set-output name=dir::$(yarn cache dir)"
+#
+#            - name: Cache Yarn cache and node_modules
+#              id: cache-dependencies
+#              uses: actions/cache@v2
+#              with:
+#                  path: |
+#                      ${{ steps.yarn-cache-dir-path.outputs.dir }}
+#                      node_modules
+#                      projects/web/node_modules
+#                  key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+#                  restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
+#
+#            - name: Install dependencies
+#              run: |
+#                  yarn install --frozen-lockfile
+#              if: steps.cache-dependencies.outputs.cache-hit != 'true'
+#
+##            - name: Semantic Release
+##              env:
+##                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+##              run: npx semantic-release -e ./release.config.cjs
+#
+#            - name: Release Drafter
+#              env:
+#                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#              run: npx semantic-release -e ./release.config.cjs
