@@ -106,6 +106,18 @@ jobs:
                   # See also: https://api.slack.com/methods/chat.postMessage#channels
                   channel-id: ${{ secrets.TEST_CHANNEL_ID }}
                   # For posting a rich message using Block Kit
-                  payload: ${{ steps.slack-body.outputs.text }}
+                  payload: |
+                      {
+                          "text": "릴리즈봇 테스트",
+                          "blocks": [
+                              {
+                                  "type": "section",
+                                  "text": {
+                                      "type": "mrkdwn",
+                                      "text": ${{ steps.slack-body.outputs.text }}
+                                  }
+                              }
+                          ]
+                      }
               env:
                   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
