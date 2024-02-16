@@ -87,6 +87,17 @@ jobs:
                   echo "The html_url is ${{ steps.release-drafted.outputs.html_url }}"
                   echo "The upload_url is ${{ steps.release-drafted.outputs.upload_url }}"
 
+            - name: Convert Slack Body
+              id: slack-body
+              uses: LoveToKnow/slackify-markdown-action
+              with:
+                  text: ${{ steps.release-drafted.outputs.body }}
+
+            - name: Convert Slack Body2
+              run: |
+                  echo "raw: ${{ steps.slack-body.outputs.text }}"
+                  echo "toJSON: ${{ toJSON(steps.slack-body.outputs.text) }}"
+
             - name: Post to a Slack channel
               id: slack
               uses: slackapi/slack-github-action@v1.25.0
@@ -95,27 +106,6 @@ jobs:
                   # See also: https://api.slack.com/methods/chat.postMessage#channels
                   channel-id: ${{ secrets.TEST_CHANNEL_ID }}
                   # For posting a rich message using Block Kit
-                  payload: |
-                      {
-                          "text": "릴리즈봇 테스트",
-                          "blocks": [
-                              {
-                                  "type": "section",
-                                  "text": {
-                                      "type": "mrkdwn",
-                                      "text": ${{ toJSON(steps.release-drafted.outputs.body) }}
-                                  }
-                              }
-                          ]
-                      }
+                  payload: ${{ toJSON(steps.slack-body.outputs.text) }}
               env:
                   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
-#              run: |
-#                  echo "The id is ${{ steps.release-drafted.outputs.id }}"
-#                  echo "The name is ${{ steps.release-drafted.outputs.name }}"
-#                  echo "The tag_name is ${{ steps.release-drafted.outputs.tag_name }}"
-#                  echo "The body is ${{ steps.release-drafted.outputs.body }}"
-#                  echo "The html_url is ${{ steps.release-drafted.outputs.html_url }}"
-#                  echo "The upload_url is ${{ steps.release-drafted.outputs.upload_url }}"
-
