@@ -2,7 +2,7 @@ name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 categories:
-    - title: '🔖 Release'
+    - title: '🔖 어떤 서비스가 운영 배포되었습니다.'
       label: 'release'
     - title: '변경사항'
       labels:
@@ -27,6 +27,5 @@ version-resolver:
             - 'patch'
     default: patch
 template: |
-    ## 어떤 서비스가 운영 배포되었습니다.
 
     $CHANGES
