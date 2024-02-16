@@ -53,26 +53,26 @@ jobs:
                   echo "The html_url is ${{ steps.draft.outputs.html_url }}"
                   echo "The upload_url is ${{ steps.draft.outputs.upload_url }}"
 
-            - name: Post to a Slack channel2
-              id: slack
-              uses: slackapi/slack-github-action@v1.25.0
-              with:
-                  # Slack channel id, channel name, or user id to post message.
-                  # See also: https://api.slack.com/methods/chat.postMessage#channels
-                  channel-id: ${{ secrets.TEST_CHANNEL_ID }}
-                  # For posting a rich message using Block Kit
-                  payload: |
-                      {
-                          "text": "릴리즈봇 테스트",
-                          "blocks": [
-                              {
-                                  "type": "section",
-                                  "text": {
-                                      "type": "mrkdwn",
-                                      "text": ${{ toJSON(steps.draft.outputs.body) }}
-                                  }
-                              }
-                          ]
-                      }
-              env:
-                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#            - name: Post to a Slack channel2
+#              id: slack
+#              uses: slackapi/slack-github-action@v1.25.0
+#              with:
+#                  # Slack channel id, channel name, or user id to post message.
+#                  # See also: https://api.slack.com/methods/chat.postMessage#channels
+#                  channel-id: ${{ secrets.TEST_CHANNEL_ID }}
+#                  # For posting a rich message using Block Kit
+#                  payload: |
+#                      {
+#                          "text": "릴리즈봇 테스트",
+#                          "blocks": [
+#                              {
+#                                  "type": "section",
+#                                  "text": {
+#                                      "type": "mrkdwn",
+#                                      "text": ${{ toJSON(steps.draft.outputs.body) }}
+#                                  }
+#                              }
+#                          ]
+#                      }
+#              env:
+#                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
