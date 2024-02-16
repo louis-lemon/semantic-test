@@ -87,16 +87,16 @@ jobs:
                   echo "The html_url is ${{ steps.release-drafted.outputs.html_url }}"
                   echo "The upload_url is ${{ steps.release-drafted.outputs.upload_url }}"
 
-#            - name: Convert Slack Body
-#              id: slack-body
-#              uses: LoveToKnow/slackify-markdown-action@v1.0.2
-#              with:
-#                  text: ${{ steps.release-drafted.outputs.body }}
-#
-#            - name: Convert Slack Body2
-#              run: |
-#                  echo "raw: ${{ steps.slack-body.outputs.text }}"
-#                  echo "toJSON: ${{ toJSON(steps.slack-body.outputs.text) }}"
+            - name: Convert Slack Body
+              id: slack-body
+              uses: LoveToKnow/slackify-markdown-action@v1.0.2
+              with:
+                  text: ${{ steps.release-drafted.outputs.body }}
+
+            - name: Convert Slack Body2
+              run: |
+                  echo "raw: ${{ steps.slack-body.outputs.text }}"
+                  echo "toJSON: ${{ toJSON(steps.slack-body.outputs.text) }}"
 #
 #            - name: Post to a Slack channel
 #              id: slack
