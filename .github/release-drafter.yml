@@ -4,11 +4,11 @@ change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 categories:
     - title: '🔖 Release'
       label: 'release'
-    - title: '🚀 Features'
+    - title: '변경사항'
       labels:
           - 'feature'
           - 'enhancement'
-    - title: '🐛 Bug Fixes'
+    - title: '수정사항'
       labels:
           - 'fix'
           - 'bugfix'
@@ -27,6 +27,6 @@ version-resolver:
             - 'patch'
     default: patch
 template: |
-    ## What’s Changed
+    ## 어떤 서비스가 운영 배포되었습니다.
 
     $CHANGES
