@@ -9,73 +9,75 @@ const plugins =  [
     //         prepareCmd: "echo 'next release version=${nextRelease.version} (test)'",
     //     },
     // ],
-    [
-        '@lemon/semantic-release-unsquash',
-        {
-            commitAnalyzerConfig: {
-                preset: 'conventionalcommits',
-                parserOpts: {
-                    noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
-                },
-                releaseRules: [
-                    { type: "hotfix", release: "patch" },
-                    { type: "docs", release: "patch" },
-                    { type: "refactor", release: "patch" },
-                    { type: "perf", release: "patch" },
-                    { type: "ci", release: "patch" },
-                    { type: "chore", release: "patch" },
-                    { type: "test", release: "patch" },
-                ],
-            },
-            notesGeneratorConfig: {
-                preset: 'conventionalcommits',
-                parserOpts: {
-                    noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
-                },
-                writerOpts: {
-                    commitsSort: ['subject', 'scope'],
-                },
-                presetConfig: {
-                    types: [
-                        { type: "feat", section: "Features" },
-                        { type: "chore", section: "Chores" },
-                        { type: "fix", section: "Bug Fixes" },
-                        { type: "hotfix", section: "Bug Fixes" },
-                        { type: "docs", section: "Docs" },
-                        { type: "refactor", section: "Refactoring" },
-                        { type: "perf", section: "Performance Improvements" },
-                        { type: "ci", section: "CI/CD Changes" },
-                        { type: "test", section: "Tests" },
-                    ]
-                }
-            },
-        },
-    ],
-    [
-        '@lemon/semantic-release-unsquash',
-        {
-            commitAnalyzerConfig: {
-                preset: 'conventionalcommits',
-                releaseRules: [
-                    { type: "workflowy", release: false }
-                ],
-            },
-            notesGeneratorConfig: {
-                preset: 'conventionalcommits',
-                presetConfig: {
-                    types: [
-                        { type: "workflowy", "section": "작업 내역", "hidden": false},
-                    ]
-                }
-            },
-        },
-    ],
     // [
-    //     '@semantic-release/changelog',
+    //     'semantic-release-unsquash',
     //     {
-    //         changelogFile: 'CHANGELOG.md',
+    //         commitAnalyzerConfig: {
+    //             preset: 'conventionalcommits',
+    //             parserOpts: {
+    //                 noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+    //             },
+    //             releaseRules: [
+    //                 { type: "hotfix", release: "patch" },
+    //                 { type: "docs", release: "patch" },
+    //                 { type: "refactor", release: "patch" },
+    //                 { type: "perf", release: "patch" },
+    //                 { type: "ci", release: "patch" },
+    //                 { type: "chore", release: "patch" },
+    //                 { type: "test", release: "patch" },
+    //             ],
+    //         },
+    //         notesGeneratorConfig: {
+    //             preset: 'conventionalcommits',
+    //             parserOpts: {
+    //                 noteKeywords: ['BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING'],
+    //             },
+    //             writerOpts: {
+    //                 commitsSort: ['subject', 'scope'],
+    //             },
+    //             presetConfig: {
+    //                 types: [
+    //                     { type: "feat", section: "Features" },
+    //                     { type: "chore", section: "Chores" },
+    //                     { type: "fix", section: "Bug Fixes" },
+    //                     { type: "hotfix", section: "Bug Fixes" },
+    //                     { type: "docs", section: "Docs" },
+    //                     { type: "refactor", section: "Refactoring" },
+    //                     { type: "perf", section: "Performance Improvements" },
+    //                     { type: "ci", section: "CI/CD Changes" },
+    //                     { type: "test", section: "Tests" },
+    //                 ]
+    //             }
+    //         },
     //     },
     // ],
+    // [
+    //     'semantic-release-unsquash',
+    //     {
+    //         commitAnalyzerConfig: {
+    //             preset: 'conventionalcommits',
+    //             releaseRules: [
+    //                 { type: "workflowy", release: false }
+    //             ],
+    //         },
+    //         notesGeneratorConfig: {
+    //             preset: 'conventionalcommits',
+    //             presetConfig: {
+    //                 types: [
+    //                     { type: "workflowy", "section": "작업 내역", "hidden": false},
+    //                 ]
+    //             }
+    //         },
+    //     },
+    // ],
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+        '@semantic-release/changelog',
+        {
+            changelogFile: 'CHANGELOG.md',
+        },
+    ],
     [
         '@semantic-release/npm',
         {
